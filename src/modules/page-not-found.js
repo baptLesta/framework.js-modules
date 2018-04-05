@@ -11,7 +11,9 @@
 		return {
 			pages: {
 				notfound: function (key, data) {
-					if (!!data && !!data.url && data.url !== document.location.pathname) {
+					if (!!data &&
+						!!data.url &&
+						(data.url !== document.location.pathname || !!data.force)) {
 						document.location = data.url;
 					}
 				}
