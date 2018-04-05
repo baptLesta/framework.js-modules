@@ -30,12 +30,15 @@
 			});
 		}
 
-		App.mediator.notify('articleChanger.entering');
+		App.mediator.notify('articleChanger.entering', {
+			item: next,
+			article: next
+		});
+		ctn.css({
+			minHeight: ''
+		});
 		next.fadeTo(500, 1, function () {
 			o.articleEnter(current, next, o);
-			ctn.css({
-				minHeight: ''
-			});
 		});
 	};
 	
@@ -161,10 +164,19 @@
 								percent: percent
 							});
 						},
-						error: function () {
+						error: function (jqXHR) {
 							App.mediator.notify('article.loaderror');
 							App.mediator.notify('pageLoad.end');
 							isLoading = false;
+							
+							if (jqXHR.status == 404) {
+								App.modules.notify('pages.notfound', {
+									url: loadUrl,
+									xhr: jqXHR,
+									status: 404,
+									force: true
+								});
+							}
 						},
 						giveup: function (e) {
 							App.mediator.notify('pageLoad.end');
