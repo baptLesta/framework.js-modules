@@ -57,7 +57,7 @@
 	
 	var onEnter = function (key, data, e) {
 		if (!!data.page) {
-			scope = $(data.page.key).find(SEL);
+			scope = $(data.page.key()).find(SEL);
 		} else if (!!data.article) {
 			scope = $(data.article).find(SEL);
 		} else {
