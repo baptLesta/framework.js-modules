@@ -23,13 +23,18 @@
 		phone: $.phone
 	};
 	
-	var getOffsetTotal = function (itemsArray) {
+	var getOffsetTotal = function (itemsArray, globalTargetProperty) {
 		var total = 0;
-		
+
 		if (itemsArray) {
 			var its = itemsArray.split(',');
 			$.each(its, function (i, value) {
-				total += $(value).height();
+				var item = $(value);
+				var targetProperty =
+				item.attr('data-screen-height-property-to-target')
+				? item.attr('data-screen-height-property-to-target')
+				: globalTargetProperty;
+				total += strategies[targetProperty](item);
 			});
 		}
 		return total;
@@ -54,7 +59,8 @@
 		var t = $(this);
 		var ratio = t.attr('data-height-ratio') || 1;
 		var fx = t.attr('data-height-property') || 'minHeight';
-		var offset = getOffsetTotal(t.attr('data-height-offset'));
+		var targetProperty = t.attr('data-height-target-property') || 'height';
+		var offset = getOffsetTotal(t.attr('data-height-offset'), targetProperty);
 		var newHeight = (win.height() - offset) * ratio;
 		var platformsVal = processPlatforms(t.attr('data-screen-height-platform') || 'all');
 		var minWidth = t.attr('data-screen-height-min-width') || 0;
@@ -107,7 +113,27 @@
 			mobileHeight = win.height();
 		}
 	};
-	
+
+	var getByProperty = function (property) {
+		var getValue = function (item) {
+			return item[property]();
+		}
+		return getValue;
+	};
+
+	var getByStyle = function (property) {
+		var getValue = function (item) {
+			return parseInt(item.css(property), 10);
+		}
+		return getValue;
+	}
+
+	var strategies = {
+		outerHeight: getByProperty('outerHeight'),
+		height: getByProperty('height'),
+		paddingTop: getByStyle('padding-top')
+	};
+
 	var actions = function () {
 		return {
 			site: {
