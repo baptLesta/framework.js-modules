@@ -40,8 +40,12 @@
 	var embedOne = function (ctx, force) {
 		var vPlayer = ctx.find(PLAYER_SEL);
 		var autoLoad = vPlayer.attr('data-autoload');
-		
-		if (!force) {
+
+		var provider = vPlayer.attr('data-oembed-provider');
+		var videoPlayers = ['Vimeo', 'Youtube'];
+		var isVideo = provider &&  ( 0 > $.inArray( provider, videoPlayers ) );
+
+		if (!(force || !isVideo)) {
 			if (App.device.mobile && autoLoad !== 'mobile' && autoLoad !== 'all') {
 				return;
 			}
